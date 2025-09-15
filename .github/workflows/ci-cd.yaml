@@ -43,3 +43,26 @@ jobs:
     - name: Docker Hub Push
       run: |
         docker push thiagoduran/conversor-complete-devops:latest
+
+    # Configuring kubectl to K8s cluster (staging)
+    - name: Configure kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+    
+    # K8s cluster authenticating
+    - name: Authenticate cluster
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+      run: |
+        echo "$KUBECONFIG" > kubeconfig
+        export KUBECONFIG=$(pwd)/kubeconfig
+        kubectl get nodes
+
+    # Staging deploy
+    - name: Deploy Kubernetes
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
