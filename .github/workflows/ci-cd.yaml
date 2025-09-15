@@ -55,7 +55,7 @@ jobs:
       env:
         KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
       run: |
-        echo "$KUBECONFIG" > kubeconfig
+        echo "${{ secrets.KUBECONFIG_STAGING }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
         kubectl get nodes
 
