@@ -24,4 +24,4 @@ jobs:
         pip install --no-cache-dir -r requirements.txt
 
     - name: Rodar testes
-      run: pytest
+      run: PYTHONPATH=. pytest
