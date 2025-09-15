@@ -11,20 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código
+    - name: Code checkout
       uses: actions/checkout@v3
 
-    - name: Configurar Python
+    - name: Configure Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.11"
 
-    - name: Instalar dependências
+    - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Rodar testes
+    - name: Run tests
       run: PYTHONPATH=. pytest
 
     # Login Docker Hub
@@ -50,19 +50,11 @@ jobs:
       with:
         version: 'latest'
     
-    # K8s cluster authenticating
-    - name: Authenticate cluster
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+    # K8s cluster authenticating and deploying (staging)
+    - name: Authenticate cluster and deploying
       run: |
         echo "${{ secrets.KUBECONFIG_STAGING }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
         kubectl get nodes
-
-    # Staging deploy
-    - name: Deploy Kubernetes
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
-      run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
