@@ -1,0 +1,45 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Instalar dependências
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Rodar testes
+      run: PYTHONPATH=. pytest
+
+    # Login Docker Hub
+    - name: Login Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Docker image build
+    - name: Docker image build
+      run: |
+        docker build -t thiagoduran/conversor-complete-devops:latest .
+
+    # Push to Docker Hub
+    - name: Docker Hub Push
+      run: |
+        docker push thiagoduran/conversor-complete-devops:latest
