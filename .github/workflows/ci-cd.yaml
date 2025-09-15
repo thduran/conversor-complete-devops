@@ -87,13 +87,12 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Authenticate cluster (production)
+    - name: Authenticate cluster and deploy (production)
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
+
         kubectl get nodes
     
-    - name: Deploy to Production
-      run: |
         kubectl apply --validate=false -f k8s/deployment-production.yaml
         kubectl apply --validate=false -f k8s/service-production.yaml
