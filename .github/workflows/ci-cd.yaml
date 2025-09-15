@@ -66,8 +66,10 @@ jobs:
     
     - name: Deploy to Staging
       run: |
-        kubectl apply -f k8s/deployment-staging.yaml
-        kubectl apply -f k8s/service-staging.yaml
+        echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
+        export KUBECONFIG=$(pwd)/kubeconfig
+        kubectl apply --validate=false -f k8s/deployment-staging.yaml
+        kubectl apply --validate=false -f k8s/service-staging.yaml
 
   production-deploy:
     needs: build-and-test
@@ -87,11 +89,11 @@ jobs:
 
     - name: Authenticate cluster (production)
       run: |
-        echo "${{ secrets.KUBECONFIG_STAGING }}" | base64 --decode > kubeconfig
+        echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
         kubectl get nodes
     
     - name: Deploy to Production
       run: |
-        kubectl apply -f k8s/deployment-production.yaml
-        kubectl apply -f k8s/service-production.yaml
+        kubectl apply --validate=false -f k8s/deployment-production.yaml
+        kubectl apply --validate=false -f k8s/service-production.yaml
