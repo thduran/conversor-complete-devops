@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: 45.55.96.177
+      url: http://45.55.96.177
     
     steps:
     - name: Checkout code
