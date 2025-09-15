@@ -60,7 +60,7 @@ jobs:
     
     - name: Authenticate cluster (staging)
       run: |
-        echo "${{ secrets.KUBECONFIG_STAGING }}" | base64 --decode > kubeconfig
+        echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
         kubectl get nodes
     
