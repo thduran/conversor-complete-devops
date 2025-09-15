@@ -1,6 +1,13 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="Conversor API", version="1.0.0")
+
+instrumentator = Instrumentator()
+instrumentator.instrument(app).expose(app)
+
+# Inicializa o Prometheus Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 @app.get("/convert/celsius-to-fahrenheit")
 def celsius_to_fahrenheit(c: float):

@@ -10,6 +10,8 @@ COPY requirements.txt .
 # Instala dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install --no-cache-dir prometheus-fastapi-instrumentator
+
 # Copia código da aplicação
 COPY app ./app
 

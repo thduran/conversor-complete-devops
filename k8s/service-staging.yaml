@@ -3,6 +3,10 @@ kind: Service
 metadata:
   name: conversor-service
   namespace: staging
+  labels:
+    app: conversor
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
 spec:
   selector:
     app: conversor
