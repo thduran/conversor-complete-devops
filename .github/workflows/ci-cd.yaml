@@ -76,15 +76,9 @@ jobs:
       run: |
         kubectl get nodes
 
-    - name: List repo files
-      run: |
-        ls
-        ls k8s/
-        ls k8s/base/
-
     - name: Deploy to Staging
       run: |
-        kubectl apply -f k8s/base/
+        kubectl apply -f k8s/base/staging
 
         kubectl set image deployment/conversor conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
         
@@ -113,6 +107,6 @@ jobs:
 
     - name: Deploy to Production
       run: |
-        kubectl apply -f k8s/base/
+        kubectl apply -f k8s/base/production
 
         kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n production
