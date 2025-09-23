@@ -4,3 +4,5 @@ gunicorn
 pytest
 httpx
 prometheus-fastapi-instrumentator
+sqlalchemy
+psycopg2-binary

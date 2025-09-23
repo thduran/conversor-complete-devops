@@ -1,22 +1,77 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from prometheus_fastapi_instrumentator import Instrumentator
+from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+from sqlalchemy.orm import sessionmaker
+import os
 
-app = FastAPI(title="Conversor API", version="1.0.0")
+# Configuração do banco
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-instrumentator = Instrumentator()
-instrumentator.instrument(app).expose(app)
+engine = create_engine(DATABASE_URL)
+metadata = MetaData()
 
-# Inicializa o Prometheus Instrumentator
+# Definição da tabela conversions
+conversions = Table(
+    "conversions",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("valor_original", Float),
+    Column("de_moeda", String),
+    Column("para_moeda", String),
+    Column("valor_convertido", Float),
+)
+
+# Cria a tabela se não existir
+metadata.create_all(engine)
+
+SessionLocal = sessionmaker(bind=engine)
+
+# Inicializa a API
+app = FastAPI(
+    title="Conversor API",
+    description="API de conversão com métricas Prometheus e persistência",
+    version="1.1.0"
+)
+
+# Prometheus
 Instrumentator().instrument(app).expose(app)
 
-@app.get("/convert/celsius-to-fahrenheit")
-def celsius_to_fahrenheit(c: float):
-    """Converte Celsius para Fahrenheit"""
-    f = (c * 9/5) + 32
-    return {"celsius": c, "fahrenheit": f}
+@app.get("/")
+async def root():
+    return {"message": "API Conversor rodando com persistência!"}
 
-@app.get("/convert/kilometers-to-miles")
-def kilometers_to_miles(km: float):
-    """Converte quilômetros para milhas"""
-    miles = km * 0.621371
-    return {"kilometers": km, "miles": miles}
+@app.get("/conversor")
+async def conversor(
+    valor: float = Query(...),
+    de: str = Query(...),
+    para: str = Query(...)
+):
+    taxa = 5.0 if de == "usd" and para == "brl" else 1.0
+    resultado = valor * taxa
+
+    # Salva no banco
+    session = SessionLocal()
+    session.execute(
+        conversions.insert().values(
+            valor_original=valor,
+            de_moeda=de,
+            para_moeda=para,
+            valor_convertido=resultado,
+        )
+    )
+    session.commit()
+    session.close()
+
+    return {
+        "valor_original": valor,
+        "de": de,
+        "para": para,
+        "valor_convertido": resultado
+    }
+
+@app.get("/historico")
+async def historico():
+    session = SessionLocal()
+    result = session.execute(conversions.select()).fetchall()
+    session.close()
+    return {"historico": [dict(r._mapping) for r in result]}
