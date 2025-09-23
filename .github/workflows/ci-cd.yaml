@@ -70,7 +70,7 @@ jobs:
     - name: Setup kubeconfig
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
-        export KUBECONFIG=$(pwd)/kubeconfig >> $GITHUB_ENV
+        echo "KUBECONFIG=$(pwd)/kubeconfig" >> $GITHUB_ENV
         kubectl get nodes
 
     - name: Deploy to Staging
