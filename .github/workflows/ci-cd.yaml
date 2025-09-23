@@ -76,6 +76,10 @@ jobs:
       run: |
         kubectl get nodes
 
+    - name: List repo files
+      run: |
+      ls -R
+
     - name: Deploy to Staging
       run: |
         kubectl apply -f conversor-complete-devops/k8s/base/
