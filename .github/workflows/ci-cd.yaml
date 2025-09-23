@@ -100,13 +100,13 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Test connection
-      run: |
-        kubectl get nodes
-
     - name: Setup kubeconfig
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
+
+    - name: Test connection
+      run: |
+        kubectl get nodes
 
     - name: Deploy to Production
       run: |
