@@ -47,7 +47,7 @@ The real value of the project is to demonstrate:
 - Configured `kubectl`
 - Docker Hub account
 - Slack account for alerts (or another service)
-👉 **Optional**: Python 3.11 if you want to run the API locally
+- 👉 **Optional**: Python 3.11 if you want to run the API locally
 
 ## 4.2 Clone the repository
 ```bash
@@ -116,9 +116,9 @@ kubectl get svc -n production
 ```
 
 4. Test with LoadBalancer IPs
-http://<IP_STAGING>/converter?value=10&from=usd&to=brl
-http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
-http://<IP_PRODUCTION>/history
+- http://<IP_STAGING>/converter?value=10&from=usd&to=brl
+- http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
+- http://<IP_PRODUCTION>/history
 
 ### 4.6 CI/CD
 
@@ -132,7 +132,7 @@ The GitHub Actions workflow (.github/workflows/ci-cd.yaml) performs:
 - Grafana → http://<IP_GRAFANA>:3000
 - Alertmanager → sends alerts to the configured Slack channel
 
-✅ Conclusion
+### ✅ 5. Conclusion
 
 This project demonstrates the complete DevOps cycle in practice:
 
@@ -144,6 +144,8 @@ This project demonstrates the complete DevOps cycle in practice:
 - PostgreSQL: managed cloud database
 
 It is a learning and portfolio project, showcasing real hands-on experience with modern DevOps from scratch to production.
+
+---
 
 PT-BR:
 
@@ -163,8 +165,6 @@ Este projeto foi desenvolvido como um **passo a passo completo de DevOps**, cobr
 
 ⚠️ **Importante:** o objetivo **não é a usabilidade da aplicação em si**, mas sim demonstrar um **pipeline DevOps completo do zero até produção**.
 
----
-
 ## 2. O que o projeto faz
 
 - Exibe uma API de conversão simples (`/converter`)
@@ -173,13 +173,10 @@ Este projeto foi desenvolvido como um **passo a passo completo de DevOps**, cobr
 - Automatiza build, teste e deploy com GitHub Actions  
 - Permite observabilidade via Grafana e alertas no Slack
 
----
 
 ## 3. Atenção sobre usabilidade
 
-Este projeto **não foi feito para uso comercial ou produção real**.  
-Funcionalidades como conversão ou histórico são **exemplos didáticos**.  
-O valor do projeto está em mostrar:
+Este projeto **não foi feito para uso comercial ou produção real**. Funcionalidades como conversão ou histórico são **exemplos didáticos**. O valor do projeto está em mostrar:
 
 - CI/CD automatizado   
 - Deploy seguro em Kubernetes  
@@ -187,7 +184,6 @@ O valor do projeto está em mostrar:
 - Alertas integrados
 - BD gerenciado em cloud
 
----
 
 ## 4. Como testar o projeto
 
@@ -205,7 +201,6 @@ git clone https://github.com/thduran/conversor-complete-devops.git
 cd conversor-complete-devops
 ```
 
----
 
 ### 4.3 Configurar secrets
 
@@ -269,9 +264,9 @@ kubectl get svc -n production
 
 4. Teste com IPs do LoadBalancer
 
-http://<IP_STAGING>/converter?value=10&from=usd&to=brl
-http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
-http://<IP_PRODUCTION>/history
+- http://<IP_STAGING>/converter?value=10&from=usd&to=brl
+- http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
+- http://<IP_PRODUCTION>/history
 
 ### 4.6 CI/CD
 
