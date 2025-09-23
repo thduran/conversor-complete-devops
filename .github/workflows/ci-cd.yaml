@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  IMAGE_NAME: thiagoduran/conversor-complete-devops
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -24,30 +27,36 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Run lint (flake8)
+      run: |
+        pip install flake8
+        flake8 .
+
     - name: Run tests
       run: PYTHONPATH=. pytest
 
-    # Login Docker Hub
-    - name: Login Docker Hub
+    - name: Docker Login
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Docker image build
-    - name: Docker image build
+    - name: Docker Build & Push
       run: |
-        docker build -t thiagoduran/conversor-complete-devops:latest .
-
-    # Push to Docker Hub
-    - name: Docker Hub Push
-      run: |
-        docker push thiagoduran/conversor-complete-devops:latest
+        IMAGE_TAG=${GITHUB_SHA::8} # usa os 8 primeiros chars do commit
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        docker build -t $IMAGE_NAME:$IMAGE_TAG .
+        docker push $IMAGE_NAME:$IMAGE_TAG
+        docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:latest
 
 
   staging-deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: http://129.212.146.29 # ajuste o IP/hostname real
 
     steps:
     - name: Checkout code
@@ -57,27 +66,27 @@ jobs:
       uses: azure/setup-kubectl@v3
       with:
         version: 'latest'
-    
-    - name: Authenticate cluster (staging)
+
+    - name: Setup kubeconfig
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
         kubectl get nodes
-    
+
     - name: Deploy to Staging
       run: |
-        echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
-        export KUBECONFIG=$(pwd)/kubeconfig
-        kubectl apply --validate=false -f k8s/deployment-staging.yaml
-        kubectl apply --validate=false -f k8s/service-staging.yaml
+        kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
+        kubectl apply -f k8s/service-staging.yaml
+
 
   production-deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: http://45.55.96.177
-    
+      url: http://134.199.241.251 # ajuste o IP/hostname real
+      # Configure no GitHub para exigir aprovação manual neste ambiente!
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -87,12 +96,13 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Authenticate cluster and deploy (production)
+    - name: Setup kubeconfig
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
         export KUBECONFIG=$(pwd)/kubeconfig
-
         kubectl get nodes
-    
-        kubectl apply --validate=false -f k8s/deployment-production.yaml
-        kubectl apply --validate=false -f k8s/service-production.yaml
+
+    - name: Deploy to Production
+      run: |
+        kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n production
+        kubectl apply -f k8s/service-production.yaml
