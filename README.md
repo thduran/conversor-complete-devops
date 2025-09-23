@@ -1,6 +1,6 @@
 # Conversor API
 
-API simples de conversão, feita com FastAPI.
+Conversion simple API, made withFastAPI.
 
 ## Endpoints
 - `/convert/celsius-to-fahrenheit?c=30`
