@@ -78,9 +78,9 @@ jobs:
 
     - name: Deploy to Staging
       run: |
-        kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
-        kubectl apply -f k8s/base/service-staging.yaml 
-
+        kubectl apply -f .
+        kubectl set image deployment/conversor conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
+        
 
   production-deploy:
     needs: build-and-test
