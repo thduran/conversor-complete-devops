@@ -78,8 +78,10 @@ jobs:
 
     - name: Deploy to Staging
       run: |
-        kubectl apply -f k8s/base/
-        kubectl apply -f k8s/base/staging/
+        kubectl apply -f k8s/base/db-credentials.yaml
+        kubectl apply -f k8s/base/namespace.yaml
+        kubectl apply -f k8s/base/staging/deployment-staging.yaml
+        kubectl apply -f k8s/base/staging/service-staging.yaml
         kubectl set image deployment/conversor conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
         
 
