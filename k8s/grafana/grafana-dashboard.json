@@ -18,7 +18,7 @@
     },
     {
       "type": "graph",
-      "title": "CPU do Processo Python (s)",
+      "title": "Python process CPU(s)",
       "targets": [
         {
           "expr": "process_cpu_seconds_total",
@@ -30,6 +30,6 @@
     }
   ],
   "schemaVersion": 30,
-  "title": "FastAPI - Requests e CPU",
+  "title": "FastAPI - Requests and CPU",
   "version": 1
 }

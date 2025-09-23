@@ -38,7 +38,7 @@ jobs:
 
     - name: Docker Build & Push
       run: |
-        IMAGE_TAG=${GITHUB_SHA::8} # usa os 8 primeiros chars do commit
+        IMAGE_TAG=${GITHUB_SHA::8}
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
         docker build -t $IMAGE_NAME:$IMAGE_TAG .
         docker push $IMAGE_NAME:$IMAGE_TAG
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: http://129.212.146.29 # ajuste o IP/hostname real
+      url: http://129.212.146.29
 
     steps:
     - name: Checkout code
@@ -88,8 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: http://134.199.241.251 # ajuste o IP/hostname real
-      # Configure no GitHub para exigir aprovação manual neste ambiente!
+      url: http://134.199.241.251
 
     steps:
     - name: Checkout code

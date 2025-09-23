@@ -21,6 +21,6 @@ data:
         static_configs:
           - targets: ["localhost:9090"]
 
-      - job_name: "fake"   # alvo falso só pra disparar InstanceDown
+      - job_name: "fake"   # fake target just to trigger InstanceDown
         static_configs:
           - targets: ["fake:1234"]

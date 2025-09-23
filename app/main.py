@@ -4,13 +4,13 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, 
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Configuração do banco
+# database configuration
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
-# Definição da tabela conversions
+# conversions table definition
 conversions = Table(
     "conversions",
     metadata,
@@ -21,12 +21,12 @@ conversions = Table(
     Column("valor_convertido", Float),
 )
 
-# Cria a tabela se não existir
+# it creates the table if not existent
 metadata.create_all(engine)
 
 SessionLocal = sessionmaker(bind=engine)
 
-# Inicializa a API
+# Initializes API
 app = FastAPI(
     title="Conversor API",
     description="API de conversão com métricas Prometheus e persistência",
@@ -49,7 +49,7 @@ async def conversor(
     taxa = 5.0 if de == "usd" and para == "brl" else 1.0
     resultado = valor * taxa
 
-    # Salva no banco
+    # Add info to database
     session = SessionLocal()
     session.execute(
         conversions.insert().values(
