@@ -79,6 +79,7 @@ jobs:
     - name: List repo files
       run: |
         ls
+        ls k8s/
 
     - name: Deploy to Staging
       run: |
