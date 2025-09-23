@@ -82,7 +82,7 @@ jobs:
 
     - name: Deploy to Staging
       run: |
-        kubectl apply -f conversor-complete-devops/k8s/base/
+        kubectl apply -f k8s/base/
 
         kubectl set image deployment/conversor conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
         
@@ -111,6 +111,6 @@ jobs:
 
     - name: Deploy to Production
       run: |
-        kubectl apply -f conversor-complete-devops/k8s/base/
+        kubectl apply -f k8s/base/
 
         kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n production
