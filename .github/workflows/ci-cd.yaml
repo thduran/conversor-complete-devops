@@ -80,8 +80,9 @@ jobs:
       run: |
         kubectl apply -f k8s/base/db-credentials.yaml
         kubectl apply -f k8s/base/namespace.yaml
-        kubectl apply -f k8s/base/staging/deployment-staging.yaml
-        kubectl apply -f k8s/base/staging/service-staging.yaml
+
+        kubectl apply -f k8s/base/staging/
+
         kubectl set image deployment/conversor conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n staging
         
 
@@ -109,5 +110,9 @@ jobs:
 
     - name: Deploy to Production
       run: |
+        kubectl apply -f k8s/base/db-credentials.yaml
+        kubectl apply -f k8s/base/namespace.yaml
+        
+        kubectl apply -f k8s/base/production/
+
         kubectl set image deployment/conversor-deployment conversor=$IMAGE_NAME:${{ env.IMAGE_TAG }} -n production
-        kubectl apply -f k8s/base/production/service-production.yaml
