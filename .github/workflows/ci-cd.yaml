@@ -78,7 +78,7 @@ jobs:
 
     - name: List repo files
       run: |
-        ls -R
+        ls
 
     - name: Deploy to Staging
       run: |
