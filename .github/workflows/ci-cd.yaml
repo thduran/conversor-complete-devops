@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: http://129.212.146.29
+      url: http://ip.example # insert your service ip here
 
     steps:
     - name: Checkout code
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: http://134.199.241.251
+      url: http://ip.example # insert your service ip here
 
     steps:
     - name: Checkout code

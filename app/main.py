@@ -15,10 +15,10 @@ conversions = Table(
     "conversions",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("valor_original", Float),
-    Column("de_moeda", String),
-    Column("para_moeda", String),
-    Column("valor_convertido", Float),
+    Column("original_value", Float),
+    Column("from_currency", String),
+    Column("to_currency", String),
+    Column("converted_value", Float),
 )
 
 # it creates the table if not existent
@@ -28,8 +28,8 @@ SessionLocal = sessionmaker(bind=engine)
 
 # Initializes API
 app = FastAPI(
-    title="Conversor API",
-    description="API de conversão com métricas Prometheus e persistência",
+    title="API Converter",
+    description="API of conversion with Prometheus metrics and persistency",
     version="1.1.0"
 )
 
@@ -38,40 +38,40 @@ Instrumentator().instrument(app).expose(app)
 
 @app.get("/")
 async def root():
-    return {"message": "API Conversor rodando com persistência!"}
+    return {"message": "API Converter running with persistency!"}
 
-@app.get("/conversor")
-async def conversor(
-    valor: float = Query(...),
-    de: str = Query(...),
+@app.get("/converter")
+async def converter(
+    value: float = Query(...),
+    from: str = Query(...),
     para: str = Query(...)
 ):
-    taxa = 5.0 if de == "usd" and para == "brl" else 1.0
-    resultado = valor * taxa
+    rate = 5.0 if from == "usd" and to == "brl" else 1.0
+    result = value * rate
 
     # Add info to database
     session = SessionLocal()
     session.execute(
         conversions.insert().values(
-            valor_original=valor,
-            de_moeda=de,
-            para_moeda=para,
-            valor_convertido=resultado,
+            original_value=value,
+            from_currency=from,
+            to_currency=to,
+            converted_value=result,
         )
     )
     session.commit()
     session.close()
 
     return {
-        "valor_original": valor,
-        "de": de,
-        "para": para,
-        "valor_convertido": resultado
+        "original_value": value,
+        "from": from,
+        "to": to,
+        "converted_value": result
     }
 
-@app.get("/historico")
-async def historico():
+@app.get("/history")
+async def history():
     session = SessionLocal()
     result = session.execute(conversions.select()).fetchall()
     session.close()
-    return {"historico": [dict(r._mapping) for r in result]}
+    return {"history": [dict(r._mapping) for r in result]}
