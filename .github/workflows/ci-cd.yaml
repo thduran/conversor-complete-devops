@@ -78,8 +78,7 @@ jobs:
 
     - name: Deploy to Staging
       run: |
-        kubectl apply -f k8s/base/db-credentials.yaml
-        kubectl apply -f k8s/base/namespace.yaml
+        kubectl apply -f k8s/base/*.yaml
 
         kubectl apply -f k8s/base/staging/
 
@@ -110,8 +109,7 @@ jobs:
 
     - name: Deploy to Production
       run: |
-        kubectl apply -f k8s/base/db-credentials.yaml
-        kubectl apply -f k8s/base/namespace.yaml
+        kubectl apply -f k8s/base/*.yaml
         
         kubectl apply -f k8s/base/production/
 
