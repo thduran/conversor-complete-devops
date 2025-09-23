@@ -108,6 +108,7 @@ jobs:
     - name: Setup kubeconfig
       run: |
         echo "${{ secrets.CLUSTER_KUBECONFIG }}" | base64 --decode > kubeconfig
+        echo "KUBECONFIG=$(pwd)/kubeconfig" >> $GITHUB_ENV
 
     - name: Test connection
       run: |
