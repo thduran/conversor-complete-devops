@@ -1,0 +1,57 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+
+# =========================
+# Virtual Environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+*.env
+*.venv
+
+# =========================
+# IDEs and Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Docker
+# =========================
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Kubernetes / DevOps
+# =========================
+# kubeconfigs locais
+*.kubeconfig
+*.kubeconfig.yaml
+
+# =========================
+# Backup / Local Repos
+# =========================
+repo-backup.git/
+
+# =========================
+# Others
+# =========================
+.DS_Store
+Thumbs.db

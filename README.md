@@ -19,19 +19,29 @@ This project was developed as a **complete step-by-step DevOps implementation**,
 
 ## 2. What the project does
 
-- Provides a simple conversion API (`/converter`)
+- Simple currency conversion API (`/converter`)
 - Stores conversion history (`/history`) in PostgreSQL
 - Exposes metrics via Prometheus (`/metrics`)
 - Automates build, test and deploy with GitHub Actions
 - Enables observability with Grafana and alerts on Slack
 
----
+## 3. Challenges and learnings
 
-## 3. Note on usability
+- Gunicorn not found -> dependencies must be listed in `requirements.txt`
+- Github blocked push of secrets -> recreating files with placeholders is a good practice
+- Docker Hub push denied (insufficient scopes) -> generating a new token with write scope solved the issue
+- Github couldn't find file path -> pushing from repo root still was required
+- Deploy without tests or approval -> validating CI first is a good practice before expanding to CD
+- Workflow failed in production job (kubectl tried localhost:8080) -> defining KUBECONFIG variable in all jobs fixed it
+- Portability -> replaced all real values (passwords, IPs, tokens) with placeholders or secrets, and clearly documented usage in the README
 
-This project was **not made for commercial or real production use**.
-Features like conversion or history are **educational examples**.
-The real value of the project is to demonstrate:
+## 4. Visual demo
+
+📄 [Click here to open .pdf with images showing: 1 - conversion history stored in Postgre; 2 - Grafana dash; 3 - Slack alert; 4 - Prometheus alert; 5 - Actions jobs](docs/img.pdf)
+
+## 5. Note on usability
+
+This project was **not made for commercial or real production use**. Features like conversion or history are **educational examples**. The real value of the project is to demonstrate:
 
 - Automated CI/CD
 - Secure deployment on Kubernetes
@@ -39,9 +49,9 @@ The real value of the project is to demonstrate:
 - Integrated alerts
 - Managed database in the cloud
 
-## 4. How to test the project
+## 6. How to test the project
 
-### 4.1 Prerequisites
+### 6.1 Prerequisites
 
 - Kubernetes cluster (DigitalOcean, Minikube or Kind)
 - Configured `kubectl`
@@ -49,15 +59,13 @@ The real value of the project is to demonstrate:
 - Slack account for alerts (or another service)
 - 👉 **Optional**: Python 3.11 if you want to run the API locally
 
-## 4.2 Clone the repository
+## 6.2 Clone the repository
 ```bash
 git clone https://github.com/thduran/conversor-complete-devops.git
 cd conversor-complete-devops
 ```
 
----
-
-### 4.3 Configure secrets
+### 6.3 Configure secrets
 
 #### Database
 Create a secret for the PostgreSQL database:
@@ -83,7 +91,7 @@ kubectl create secret generic grafana-admin \
   --from-literal=password="$GRAFANA_PASSWORD" \
   -n monitoring
 ```
-### 4.4 Run the app locally (optional)
+### 6.4 Run the app locally (optional)
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -93,7 +101,7 @@ uvicorn main:app --reload
 - API available at http://localhost:8000
 - Test /converter and /history
 
-### 4.5 Manual deploy (without CI/CD)
+### 6.5 Manual deploy (without CI/CD)
 
 1. Create namespaces and apply Secrets
 ```bash
@@ -120,21 +128,21 @@ kubectl get svc -n production
 - http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
 - http://<IP_PRODUCTION>/history
 
-### 4.6 CI/CD
+### 6.6 CI/CD
 
 The GitHub Actions workflow (.github/workflows/ci-cd.yaml) performs:
 - Docker image build and push to Docker Hub
 - Automatic deploy to staging (production requires manual approval)
 
-### 4.7 Observability
+### 6.7 Observability
 
 - Prometheus → http://<IP_PROMETHEUS>:9090
 - Grafana → http://<IP_GRAFANA>:3000
 - Alertmanager → sends alerts to the configured Slack channel
 
-### ✅ 5. Conclusion
+### ✅ 7. Conclusion
 
-This project demonstrates the complete DevOps cycle in practice:
+This project demonstrates how even a simple API can become a showcase of good practices with clear and structured documentation.
 
 - Docker: application containerization
 - GitHub Actions: CI/CD pipeline
@@ -167,14 +175,27 @@ Este projeto foi desenvolvido como um **passo a passo completo de DevOps**, cobr
 
 ## 2. O que o projeto faz
 
-- Exibe uma API de conversão simples (`/converter`)
+- API simples de conversão de moeda (`/converter`)
 - Salva histórico de conversões (`/history`) em PostgreSQL
 - Expõe métricas via Prometheus (`/metrics`)  
 - Automatiza build, teste e deploy com GitHub Actions  
 - Permite observabilidade via Grafana e alertas no Slack
 
+## 3. Alguns desafios e aprendizados
 
-## 3. Atenção sobre usabilidade
+- Gunicorn não encontrado -> dependências precisam estar nos requirements.txt para serem "vistas"
+- Github bloqueou push de secrets -> recriar arquivos com placeholders é uma boa prática
+- Push no Docker Hub negado (insufficient scopes) -> corrigido criando token com escopo de escrita.
+- Github não encontra path -> não havia feito push a partir da raiz
+- Deploy sem testes nem aprovação -> validar primeiro o CI antes de expandir para CD.
+- Workflow falhava no job de produção (kubectl conectava em localhost:8080) -> definir variável KUBECONFIG em todos os jobs necessários
+- Tornar o projeto portável -> substituir todos os valores reais de senhas, IPs, tokens por placeholders ou secrets, além de documentar o uso no README de forma clara.
+
+## 4. Demonstração visual
+
+📄 [Clique aqui para abrir um .pdf com as imagens mostrando: 1 - registro de conversões no banco; 2 - Gráfico no Grafana; 3 - Alerta no Slack; 4 - Alerta no Prometheus; 5 - Jobs do Actions](docs/img.pdf)
+
+## 5. Atenção sobre usabilidade
 
 Este projeto **não foi feito para uso comercial ou produção real**. Funcionalidades como conversão ou histórico são **exemplos didáticos**. O valor do projeto está em mostrar:
 
@@ -185,24 +206,23 @@ Este projeto **não foi feito para uso comercial ou produção real**. Funcional
 - BD gerenciado em cloud
 
 
-## 4. Como testar o projeto
+## 6. Como testar o projeto
 
-### 4.1 Pré-requisitos
+### 6.1 Pré-requisitos
 
 - Cluster Kubernetes (DigitalOcean, Minikube ou Kind)
 - `kubectl` configurado  
 - Conta no Docker Hub 
 - Conta no Slack pra alertas (ou outro)
-👉 **Opcional**: Python 3.11 se quiser rodar a API localmente.
+- 👉 **Opcional**: Python 3.11 se quiser rodar a API localmente.
 
-### 4.2 Clone o repositório
+### 6.2 Clone o repositório
 ```bash
 git clone https://github.com/thduran/conversor-complete-devops.git
 cd conversor-complete-devops
 ```
 
-
-### 4.3 Configurar secrets
+### 6.3 Configurar secrets
 
 #### Banco de dados
 Crie um secret pro banco PostgreSQL:
@@ -230,7 +250,7 @@ kubectl create secret generic grafana-admin \
   -n monitoring
 ```
 
-### 4.4 Rodar a aplicação localmente (opcional)
+### 6.4 Rodar a aplicação localmente (opcional)
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -240,7 +260,7 @@ uvicorn main:app --reload
 - API disponível em http://localhost:8000
 - Teste /converter e /history
 
-### 4.5 Deploy manual (sem CI/CD)
+### 6.5 Deploy manual (sem CI/CD)
 
 1. Criar namespaces e aplicar Secrets
 ```bash
@@ -268,21 +288,21 @@ kubectl get svc -n production
 - http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
 - http://<IP_PRODUCTION>/history
 
-### 4.6 CI/CD
+### 6.6 CI/CD
 
 O workflow GitHub Actions (.github/workflows/ci-cd.yaml) faz:
 - Build e push de imagem Docker para Docker Hub
 - Deploy automático para staging (produção requer aprovação manual)
 
-### 4.7 Observabilidade
+### 6.7 Observabilidade
 
 - Prometheus → http://<IP_PROMETHEUS>:9090
 - Grafana → http://<IP_GRAFANA>:3000
 - Alertmanager → envia alertas para o canal Slack configurado
 
-✅ Conclusão
+### ✅ 7. Conclusão
 
-Este projeto mostra na prática o ciclo DevOps completo:
+Este projeto mostra como até uma API simples pode se tornar uma vitrine de boas práticas DevOps quando acompanhada de documentação clara e estruturada.
 
 - Docker: containerização da aplicação
 - GitHub Actions: pipeline CI/CD
