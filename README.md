@@ -233,7 +233,7 @@ kubectl apply -f k8s/base
 Crie um secret pro banco PostgreSQL:
 
 ```bash
-export DB_URL="postgresql://usuario:senha@host:porta/banco"
+export DB_URL='postgresql://usuario:senha@host:porta/banco'
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n staging

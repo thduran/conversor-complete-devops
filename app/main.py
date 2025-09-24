@@ -4,13 +4,12 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, 
 from sqlalchemy.orm import sessionmaker
 import os
 
-# database configuration
+# DATABASE
 DATABASE_URL = os.getenv("DATABASE_URL")
-
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
-# conversions table definition
+# Table definition
 conversions = Table(
     "conversions",
     metadata,
@@ -21,19 +20,19 @@ conversions = Table(
     Column("converted_value", Float),
 )
 
-# it creates the table if not existent
+# Create table if not exists
 metadata.create_all(engine)
 
 SessionLocal = sessionmaker(bind=engine, future=True)
 
-# Initializes API
+# FastAPI app
 app = FastAPI(
     title="API Converter",
     description="API of conversion with Prometheus metrics and persistency",
-    version="1.1.0"
+    version="1.2.0"
 )
 
-# Prometheus
+# Prometheus instrumentation
 Instrumentator().instrument(app).expose(app)
 
 @app.get("/")
@@ -46,10 +45,11 @@ async def converter(
     from_: str = Query(..., alias="from"),
     to: str = Query(...)
 ):
-    rate = 5.0 if from_ == "usd" and to == "brl" else 1.0
+    # Conversion logic
+    rate = 5.0 if from_.lower() == "usd" and to.lower() == "brl" else 1.0
     result = value * rate
 
-    # Add info to database
+    # Insert into database safely
     session = SessionLocal()
     try:
         session.execute(
@@ -61,6 +61,9 @@ async def converter(
             )
         )
         session.commit()
+    except Exception as e:
+        session.rollback()
+        return {"error": str(e)}
     finally:
         session.close()
 
