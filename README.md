@@ -57,7 +57,7 @@ This project was **not made for commercial or real production use**. Features li
 - Configured `kubectl`
 - Docker Hub account
 - Slack account for alerts (or another service)
-- 👉 **Optional**: Python 3.11 if you want to run the API locally
+- **Optional**: Python 3.11 if you want to run the API locally
 
 ## 6.2 Clone the repository
 ```bash
@@ -214,7 +214,7 @@ Este projeto **não foi feito para uso comercial ou produção real**. Funcional
 - `kubectl` configurado  
 - Conta no Docker Hub 
 - Conta no Slack pra alertas (ou outro)
-- 👉 **Opcional**: Python 3.11 se quiser rodar a API localmente.
+- **Opcional**: Python 3.11 se quiser rodar a API localmente.
 
 ### 6.2 Clone o repositório
 ```bash
@@ -223,6 +223,11 @@ cd conversor-complete-devops
 ```
 
 ### 6.3 Configurar secrets
+
+1. Criar namespaces
+```bash
+kubectl apply -f k8s/base
+```
 
 #### Banco de dados
 Crie um secret pro banco PostgreSQL:
@@ -250,31 +255,21 @@ kubectl create secret generic grafana-admin \
   -n monitoring
 ```
 
-### 6.4 Rodar a aplicação localmente (opcional)
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
 - API disponível em http://localhost:8000
 - Teste /converter e /history
 
-### 6.5 Deploy manual (sem CI/CD)
+### 6.4 Deploy manual (sem CI/CD)
 
-1. Criar namespaces e aplicar Secrets
-```bash
-kubectl apply -f k8s/base
-```
-
-2. Deploy do banco, API, Prometheus e Grafana:
+1. Deploy do banco, API, Prometheus e Grafana:
 ```bash
 kubectl apply -f k8s/base/staging
 kubectl apply -f k8s/base/production
-kubectl apply -f k8s/base/monitoring
+kubectl apply -f k8s/prometheus
+kubectl apply -f k8s/prometheus/alertmanager
+kubectl apply -f k8s/grafana
 ```
 
-3. Verificar pods e serviços:
+2. Verificar pods e serviços:
 ```bash
 kubectl get pods -n staging
 kubectl get pods -n production
@@ -282,19 +277,19 @@ kubectl get svc -n staging
 kubectl get svc -n production
 ```
 
-4. Teste com IPs do LoadBalancer
+3. Teste com IPs do LoadBalancer
 
 - http://<IP_STAGING>/converter?value=10&from=usd&to=brl
 - http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
 - http://<IP_PRODUCTION>/history
 
-### 6.6 CI/CD
+### 6.5 CI/CD
 
 O workflow GitHub Actions (.github/workflows/ci-cd.yaml) faz:
 - Build e push de imagem Docker para Docker Hub
 - Deploy automático para staging (produção requer aprovação manual)
 
-### 6.7 Observabilidade
+### 6.6 Observabilidade
 
 - Prometheus → http://<IP_PROMETHEUS>:9090
 - Grafana → http://<IP_GRAFANA>:3000

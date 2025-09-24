@@ -43,10 +43,10 @@ async def root():
 @app.get("/converter")
 async def converter(
     value: float = Query(...),
-    from: str = Query(...),
-    para: str = Query(...)
+    from_: str = Query(...),
+    to: str = Query(...)
 ):
-    rate = 5.0 if from == "usd" and to == "brl" else 1.0
+    rate = 5.0 if from_ == "usd" and to == "brl" else 1.0
     result = value * rate
 
     # Add info to database
@@ -54,7 +54,7 @@ async def converter(
     session.execute(
         conversions.insert().values(
             original_value=value,
-            from_currency=from,
+            from_currency=from_,
             to_currency=to,
             converted_value=result,
         )
@@ -64,7 +64,7 @@ async def converter(
 
     return {
         "original_value": value,
-        "from": from,
+        "from_": from_,
         "to": to,
         "converted_value": result
     }
