@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query
 from prometheus_fastapi_instrumentator import Instrumentator
-from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
+from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table, text
 from sqlalchemy.orm import sessionmaker
 import os
 
@@ -24,7 +24,7 @@ conversions = Table(
 # it creates the table if not existent
 metadata.create_all(engine)
 
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine, future=True)
 
 # Initializes API
 app = FastAPI(
@@ -43,7 +43,7 @@ async def root():
 @app.get("/converter")
 async def converter(
     value: float = Query(...),
-    from_: str = Query(...),
+    from_: str = Query(..., alias="from"),
     to: str = Query(...)
 ):
     rate = 5.0 if from_ == "usd" and to == "brl" else 1.0
@@ -51,16 +51,18 @@ async def converter(
 
     # Add info to database
     session = SessionLocal()
-    session.execute(
-        conversions.insert().values(
-            original_value=value,
-            from_currency=from_,
-            to_currency=to,
-            converted_value=result,
+    try:
+        session.execute(
+            conversions.insert().values(
+                original_value=value,
+                from_currency=from_,
+                to_currency=to,
+                converted_value=result,
+            )
         )
-    )
-    session.commit()
-    session.close()
+        session.commit()
+    finally:
+        session.close()
 
     return {
         "original_value": value,
@@ -72,6 +74,8 @@ async def converter(
 @app.get("/history")
 async def history():
     session = SessionLocal()
-    result = session.execute(conversions.select()).fetchall()
-    session.close()
+    try:
+        result = session.execute(conversions.select()).all()
+    finally:
+        session.close()
     return {"history": [dict(r._mapping) for r in result]}
