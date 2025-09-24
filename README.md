@@ -67,10 +67,16 @@ cd conversor-complete-devops
 
 ### 6.3 Configure secrets
 
+1. Create namespaces
+```bash
+kubectl apply -f k8s/base
+```
+
 #### Database
 Create a secret for the PostgreSQL database:
+
 ```bash
-export DB_URL="postgresql://user:password@host:port/database"
+export DB_URL='postgresql://usuario:senha@host:porta/banco'
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n staging
@@ -86,7 +92,7 @@ kubectl create secret generic db-credentials \
 
 #### Grafana (optional)
 ```bash
-export GRAFANA_PASSWORD="your_password"
+export GRAFANA_PASSWORD="sua_senha"
 kubectl create secret generic grafana-admin \
   --from-literal=password="$GRAFANA_PASSWORD" \
   -n monitoring
@@ -98,21 +104,15 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-- API available at http://localhost:8000
-- Test /converter and /history
-
 ### 6.5 Manual deploy (without CI/CD)
 
-1. Create namespaces and apply Secrets
-```bash
-kubectl apply -f k8s/base
-```
-
-2. Deploy database, API, Prometheus and Grafana:
+1. Deploy database, API, Prometheus and Grafana:
 ```bash
 kubectl apply -f k8s/base/staging
 kubectl apply -f k8s/base/production
-kubectl apply -f k8s/base/monitoring
+kubectl apply -f k8s/prometheus
+kubectl apply -f k8s/prometheus/alertmanager
+kubectl apply -f k8s/grafana
 ```
 
 3. Check pods and services:
@@ -124,6 +124,7 @@ kubectl get svc -n production
 ```
 
 4. Test with LoadBalancer IPs
+
 - http://<IP_STAGING>/converter?value=10&from=usd&to=brl
 - http://<IP_PRODUCTION>/converter?value=20&from=eur&to=brl
 - http://<IP_PRODUCTION>/history
@@ -135,6 +136,8 @@ The GitHub Actions workflow (.github/workflows/ci-cd.yaml) performs:
 - Automatic deploy to staging (production requires manual approval)
 
 ### 6.7 Observability
+
+Check services: `kubectl get svc -n monitoring`
 
 - Prometheus → http://<IP_PROMETHEUS>:9090
 - Grafana → http://<IP_GRAFANA>:3000
@@ -255,9 +258,6 @@ kubectl create secret generic grafana-admin \
   -n monitoring
 ```
 
-- API disponível em http://localhost:8000
-- Teste /converter e /history
-
 ### 6.4 Deploy manual (sem CI/CD)
 
 1. Deploy do banco, API, Prometheus e Grafana:
@@ -290,6 +290,8 @@ O workflow GitHub Actions (.github/workflows/ci-cd.yaml) faz:
 - Deploy automático para staging (produção requer aprovação manual)
 
 ### 6.6 Observabilidade
+
+Verificar serviços: `kubectl get svc -n monitoring`
 
 - Prometheus → http://<IP_PROMETHEUS>:9090
 - Grafana → http://<IP_GRAFANA>:3000
