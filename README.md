@@ -83,7 +83,7 @@ kubectl create secret generic db-admin-pass \
 
 [staging] Deploy Postgre
 
-`kubectl apply -f k8s/base/postgres-staging.yaml`
+`kubectl apply -f k8s/base/staging/postgres-staging.yaml`
 
 [staging] Create the connection string secret for the API
 
@@ -104,7 +104,7 @@ kubectl create secret generic db-admin-pass \
 
 [production] Deploy Postgre
 
-`kubectl apply -f k8s/base/postgres-production.yaml`
+`kubectl apply -f k8s/base/production/postgres-production.yaml`
 
 [production] Create the connection string secret for the API
 
@@ -339,3 +339,4 @@ Este projeto mostra como até uma API simples pode se tornar uma vitrine de boas
 
 
 É um projeto de aprendizado e portfólio, mostrando experiência real em DevOps moderno do zero até produção.
+
