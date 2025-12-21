@@ -73,14 +73,43 @@ kubectl apply -f k8s/base
 ```
 
 #### Database
-Create a secret for the PostgreSQL database:
+[staging] Create a secret for the Postgres database
 
 ```bash
-export DB_URL='postgresql://usuario:senha@host:porta/banco'
+kubectl create secret generic db-admin-pass \
+  --from-literal=PASSWORD="type_Your_Staging_Password_Here" \
+  -n staging
+```
+
+[staging] Deploy Postgre
+
+`kubectl apply -f k8s/base/postgres-staging.yaml`
+
+[staging] Create the connection string secret for the API
+
+`export DB_URL='postgresql://postgres:type_The_Same_Password_Here@postgres-svc:5432/app_db'`
+```bash
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n staging
+```
 
+[production] Create a secret for the Postgres database
+
+```bash
+kubectl create secret generic db-admin-pass \
+  --from-literal=PASSWORD="type_Your_Production_Password_Here" \
+  -n production
+```
+
+[production] Deploy Postgre
+
+`kubectl apply -f k8s/base/postgres-production.yaml`
+
+[production] Create the connection string secret for the API
+
+`export DB_URL_PROD='postgresql://postgres:type_The_Same_Password_Here@postgres-svc:5432/app_db'`
+```bash
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n production
@@ -92,7 +121,7 @@ kubectl create secret generic db-credentials \
 
 #### Grafana (optional)
 ```bash
-export GRAFANA_PASSWORD="sua_senha"
+export GRAFANA_PASSWORD="your_Password"
 kubectl create secret generic grafana-admin \
   --from-literal=password="$GRAFANA_PASSWORD" \
   -n monitoring
@@ -307,5 +336,6 @@ Este projeto mostra como até uma API simples pode se tornar uma vitrine de boas
 - Prometheus & Grafana: métricas e dashboards
 - Alertmanager: alertas integrados ao Slack
 - PostgreSQL: banco de dados gerenciado em cloud
+
 
 É um projeto de aprendizado e portfólio, mostrando experiência real em DevOps moderno do zero até produção.
