@@ -56,39 +56,32 @@ kubectl apply -f k8s/base
 ```
 
 #### Banco de dados
-Defina a senha pro Postgres:
-
-```bash
-export DB_PASSWORD="my-password"
-```
 
 Crie a secret pro Postgres:
 
 ```bash
 # Staging
 kubectl create secret generic db-admin-pass \
-  --from-literal=PASSWORD="$DB_PASSWORD" \
+  --from-literal=PASSWORD="my-password" \
   -n staging
 
 # Production
 kubectl create secret generic db-admin-pass \
-  --from-literal=PASSWORD="$DB_PASSWORD" \
+  --from-literal=PASSWORD="my-password" \
   -n production
 ```
 
 Crie a secret para a aplicação:
 
 ```bash
-export DB_URL="postgresql://postgres:$DB_PASSWORD@postgres-svc:5432/app_db"
-
 # Staging
 kubectl create secret generic db-credentials \
-  --from-literal=DATABASE_URL="$DB_URL" \
+  --from-literal=DATABASE_URL="postgresql://postgres:my-password@postgres-svc:5432/app_db" \
   -n staging
 
 # Production
 kubectl create secret generic db-credentials \
-  --from-literal=DATABASE_URL="$DB_URL" \
+  --from-literal=DATABASE_URL="postgresql://postgres:my-password@postgres-svc:5432/app_db" \
   -n production
 ```
 
