@@ -1,4 +1,4 @@
-[Para PT-BR, clique aqui](#conversor-api---devops-end-to-end-portfólio)
+[PT-BR, clique aqui](#pt-br)
 
 # Converter API - DevOps End-to-End (Portfolio)
 
@@ -140,8 +140,7 @@ The workflow (.github/workflows/ci-cd.yaml) runs on every push to the main branc
 This project consolidated fundamental knowledge for a DevOps Engineer role, demonstrating the ability to orchestrate, automate and monitor modern applications in containerized environments.
 
 ---
-
-PT-BR:
+<div id="pt-br"></div>
 
 # Conversor - DevOps End-to-End (Portfólio)
 
