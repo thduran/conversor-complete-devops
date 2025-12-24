@@ -20,4 +20,7 @@ spec:
         - containerPort: 3000
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
-          value: "${GRAFANA_PASSWORD}" # you must define here, locally or create a secret instead
+          valueFrom:
+            secretKeyRef:
+              name: grafana-admin
+              key: password

@@ -4,14 +4,20 @@ metadata:
   name: conversor
   namespace: production
 spec:
-  replicas: 1
+#  replicas: 1 (hpa added below)
   selector:
     matchLabels:
       app: conversor
+
   template:
     metadata:
       labels:
         app: conversor
+      annotations: # for service discovery
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+
     spec:
       containers:
       - name: conversor
@@ -24,3 +30,11 @@ spec:
               secretKeyRef:
                 name: db-credentials
                 key: DATABASE_URL
+
+        resources:
+          requests:
+            cpu: "300m"       # app had 386m peak
+            memory: "250Mi"   # the app itself takes ~116Mi
+          limits:
+            cpu: "1000m"      # 1 core (~3x of peak), so that no pod takes it all
+            memory: "350Mi"   # 3x 116Mi
