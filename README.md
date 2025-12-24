@@ -57,32 +57,18 @@ kubectl apply -f k8s/base
 
 #### Banco de dados
 
-Crie a secret pro Postgres:
+Crie as secrets para o Postgres
 
 ```bash
-# Staging
-kubectl create secret generic db-admin-pass \
-  --from-literal=PASSWORD="my-password" \
-  -n staging
+# Senha do admin (staging e production)
+kubectl create secret generic db-admin-pass -n staging --from-literal=PASSWORD="postgres"
+kubectl create secret generic db-admin-pass -n production --from-literal=PASSWORD="postgres"
 
-# Production
-kubectl create secret generic db-admin-pass \
-  --from-literal=PASSWORD="my-password" \
-  -n production
-```
-
-Crie a secret para a aplicação:
-
-```bash
-# Staging
-kubectl create secret generic db-credentials \
-  --from-literal=DATABASE_URL="postgresql://postgres:my-password@postgres-svc:5432/app_db" \
-  -n staging
-
-# Production
-kubectl create secret generic db-credentials \
-  --from-literal=DATABASE_URL="postgresql://postgres:my-password@postgres-svc:5432/app_db" \
-  -n production
+# Conexão da aplicação (staging e production)
+kubectl create secret generic db-credentials -n staging \
+  --from-literal=DATABASE_URL="postgresql://postgres:postgres@postgres-svc:5432/app_db"
+kubectl create secret generic db-credentials -n production \
+  --from-literal=DATABASE_URL="postgresql://postgres:postgres@postgres-svc:5432/app_db"
 ```
 
 #### Grafana (opcional)
