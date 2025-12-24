@@ -56,14 +56,37 @@ kubectl apply -f k8s/base
 ```
 
 #### Banco de dados
-Crie um secret pro banco PostgreSQL:
+Defina a senha pro Postgres:
 
 ```bash
-export DB_URL='postgresql://usuario:senha@host:porta/banco'
+export DB_PASSWORD="my-password"
+```
+
+Crie a secret pro Postgres:
+
+```bash
+# Staging
+kubectl create secret generic db-admin-pass \
+  --from-literal=PASSWORD="$DB_PASSWORD" \
+  -n staging
+
+# Production
+kubectl create secret generic db-admin-pass \
+  --from-literal=PASSWORD="$DB_PASSWORD" \
+  -n production
+```
+
+Crie a secret para a aplicação:
+
+```bash
+export DB_URL="postgresql://postgres:$DB_PASSWORD@postgres-svc:5432/app_db"
+
+# Staging
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n staging
 
+# Production
 kubectl create secret generic db-credentials \
   --from-literal=DATABASE_URL="$DB_URL" \
   -n production
@@ -71,7 +94,7 @@ kubectl create secret generic db-credentials \
 
 #### Grafana (opcional)
 ```bash
-export GRAFANA_PASSWORD="sua_senha"
+export GRAFANA_PASSWORD="my-password"
 kubectl create secret generic grafana-admin \
   --from-literal=password="$GRAFANA_PASSWORD" \
   -n monitoring
